@@ -61,20 +61,20 @@ func WriteCachebd() {
 	}
 
 	j := 0
-	for i := 0; i < len(order); i++ { // в структуру Orders записываем остальные структуры
+	for i := 0; i < len(order); i++ {
 		order[i].Delivery = delivery[i]
 		order[i].Payment = payment[i]
 		for j < len(itemIds) {
 			var itemStruct []Model.Items
-			if itemIds[j] == order[i].OrderUid { // сравниваем order_uid из order и item, в случае совпадения записываем элемент item в массив структур Items
+			if itemIds[j] == order[i].OrderUid {
 				itemStruct = append(itemStruct, item[j])
-				j++ //увеличиваем счетчик, чтобы не начинать каждый раз с начала массива
+				j++
 			} else {
-				order[i].Items = itemStruct // Как только order_uid из двух структур перестают совпадать, записываем полученный массив Items в order
+				order[i].Items = itemStruct
 				break
 			}
 		}
-		Cache[order[i].OrderUid] = order[i] // полученный элемент order записываем в map с ключом order_uid
+		Cache[order[i].OrderUid] = order[i]
 	}
 }
 
@@ -93,8 +93,7 @@ func ReadFromChannel() {
 	}
 }
 
-func WriteData(m *stan.Msg) error { // функция записи данных в кеш и бд
-	// сначала идет запись из json в кеш
+func WriteData(m *stan.Msg) error {
 	var order Model.Orders
 	err := json.Unmarshal(m.Data, &order)
 	if err != nil {
